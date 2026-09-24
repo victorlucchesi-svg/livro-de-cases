@@ -1,0 +1,674 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Livro de Cases Bequest</title>
+<style>
+  html, body { margin: 0; padding: 0; }
+  [hidden] { display: none !important; }
+  :root {
+    --accent: #4228EB;
+    --accent-ink: #FFFFFF;
+    --ink: #16132B;
+    --ink-soft: #4B4768;
+    --paper: #F7F6FB;
+    --surface: #FFFFFF;
+    --line: #E3E0F2;
+    --success: #0F7A52;
+    --success-bg: #E7F5EE;
+    --danger: #B23A24;
+    --danger-bg: #FBEAE5;
+    color-scheme: light;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root:not([data-theme="light"]) {
+      --accent: #8C7CF5;
+      --accent-ink: #16132B;
+      --ink: #EDEBFB;
+      --ink-soft: #B3ADD6;
+      --paper: #100E1F;
+      --surface: #1B1833;
+      --line: #322C54;
+      --success: #5FC79A;
+      --success-bg: #123527;
+      --danger: #E68A75;
+      --danger-bg: #3A1E17;
+      color-scheme: dark;
+    }
+  }
+  :root[data-theme="dark"] {
+    --accent: #8C7CF5;
+    --accent-ink: #16132B;
+    --ink: #EDEBFB;
+    --ink-soft: #B3ADD6;
+    --paper: #100E1F;
+    --surface: #1B1833;
+    --line: #322C54;
+    --success: #5FC79A;
+    --success-bg: #123527;
+    --danger: #E68A75;
+    --danger-bg: #3A1E17;
+    color-scheme: dark;
+  }
+
+  * { box-sizing: border-box; }
+  body {
+    background: var(--paper);
+    color: var(--ink);
+    font-family: "DM Sans", -apple-system, BlinkMacSystemFont, sans-serif;
+    padding-inline: 16px;
+    padding-block: 28px 64px;
+    max-width: 720px;
+    margin-inline: auto;
+  }
+  h1, h2, h3, label, .eyebrow, button { font-family: "Sora", -apple-system, sans-serif; }
+
+  header { margin-bottom: 26px; }
+  .eyebrow {
+    display: inline-flex; align-items: center; gap: 6px;
+    font-size: 12px;
+    font-weight: 700;
+    letter-spacing: 0.07em;
+    text-transform: uppercase;
+    color: var(--accent);
+    background: color-mix(in srgb, var(--accent) 12%, transparent);
+    padding: 6px 12px 6px 10px;
+    border-radius: 999px;
+    margin: 0 0 14px;
+  }
+  h1 { font-size: 29px; font-weight: 700; letter-spacing: -0.01em; margin: 0 0 8px; text-wrap: balance; }
+  .sub { color: var(--ink-soft); font-size: 14.5px; margin: 0 0 14px; line-height: 1.55; max-width: 52ch; }
+  .clickup-link {
+    display: inline-flex; align-items: center; gap: 6px;
+    font-size: 13px; font-weight: 600; color: var(--accent);
+    text-decoration: none; border-bottom: 1px solid transparent;
+  }
+  .clickup-link:hover { border-color: var(--accent); }
+
+  .tip {
+    background: var(--success-bg); border: 1px solid var(--line); border-radius: 12px;
+    padding: 16px 18px; margin-bottom: 22px;
+  }
+  .tip h3 { font-size: 13px; font-weight: 700; margin: 0 0 7px; color: var(--success); display: flex; align-items: center; gap: 6px; }
+  .tip p { font-size: 13.5px; line-height: 1.6; color: var(--ink); margin: 0; }
+  .tip strong { color: var(--success); }
+
+  .topbar {
+    display: flex; gap: 10px; flex-wrap: wrap;
+    margin-bottom: 14px;
+  }
+  .topbar .field { flex: 1 1 160px; }
+
+  .toggle {
+    display: flex; gap: 4px; padding: 4px;
+    background: var(--surface); border: 1px solid var(--line); border-radius: 12px;
+    margin-bottom: 20px;
+  }
+  .toggle button {
+    flex: 1; border: none; background: transparent; color: var(--ink-soft);
+    font-size: 14px; font-weight: 600; padding: 10px 12px; border-radius: 9px;
+    cursor: pointer; transition: background 0.15s, color 0.15s;
+  }
+  .toggle button.active[data-kind="sucesso"] { background: var(--success-bg); color: var(--success); }
+  .toggle button.active[data-kind="fracasso"] { background: var(--danger-bg); color: var(--danger); }
+
+  section.card {
+    background: var(--surface); border: 1px solid var(--line); border-radius: 14px;
+    padding: 20px; margin-bottom: 14px;
+  }
+  section.card h2 {
+    font-size: 13px; font-weight: 700; letter-spacing: 0.04em; text-transform: uppercase;
+    color: var(--ink-soft); margin: 0 0 16px; padding-bottom: 12px;
+    border-bottom: 1px solid var(--line);
+  }
+  #card_sucesso { border-left: 3px solid var(--success); }
+  #card_sucesso h2 { color: var(--success); }
+  #card_fracasso { border-left: 3px solid var(--danger); }
+  #card_fracasso h2 { color: var(--danger); }
+  .grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 12px; }
+  .field { display: flex; flex-direction: column; gap: 6px; margin-bottom: 12px; }
+  .field:last-child { margin-bottom: 0; }
+  .field label { font-size: 12.5px; font-weight: 600; color: var(--ink); }
+  .field label .req { color: var(--danger); }
+  .field .hint { font-size: 11.5px; color: var(--ink-soft); margin-top: -2px; }
+
+  input, select, textarea {
+    font-family: "DM Sans", sans-serif; font-size: 14px; color: var(--ink);
+    background: var(--paper); border: 1px solid var(--line); border-radius: 9px;
+    padding: 9px 11px; width: 100%;
+  }
+  input:focus, select:focus, textarea:focus {
+    outline: 2px solid var(--accent); outline-offset: 1px;
+  }
+  textarea { resize: vertical; min-height: 60px; line-height: 1.5; }
+
+  .segrow { display: flex; gap: 8px; }
+  .segrow button {
+    flex: 1; padding: 9px 10px; border-radius: 9px; border: 1px solid var(--line);
+    background: var(--paper); color: var(--ink-soft); font-size: 13px; font-weight: 600;
+    cursor: pointer;
+  }
+  .segrow button.active { background: var(--accent); color: var(--accent-ink); border-color: var(--accent); }
+  .toggle button, .segrow button, .btn { transition: background 0.15s, color 0.15s, border-color 0.15s, transform 0.1s, box-shadow 0.15s; }
+  .toggle button:active, .segrow button:active { transform: scale(0.97); }
+
+  .preview {
+    background: var(--paper); border: 1px solid var(--line); border-radius: 10px;
+    padding: 14px; font-family: ui-monospace, "SF Mono", Menlo, monospace;
+    font-size: 12.5px; line-height: 1.65; white-space: pre-wrap; word-break: break-word;
+    color: var(--ink-soft); max-height: 260px; overflow-y: auto;
+  }
+  .missing {
+    font-size: 12.5px; color: var(--danger); margin-top: 8px; min-height: 16px; font-weight: 600;
+  }
+
+  .actions {
+    display: flex; gap: 10px; flex-wrap: wrap; margin-top: 20px;
+  }
+  .btn {
+    font-size: 14px; font-weight: 700; border-radius: 10px; padding: 12px 18px;
+    cursor: pointer; border: 1px solid transparent; display: inline-flex; align-items: center; gap: 8px;
+  }
+  .btn-primary {
+    background: var(--accent); color: var(--accent-ink); flex: 1 1 200px; justify-content: center;
+    box-shadow: 0 1px 2px rgba(0,0,0,0.06), 0 6px 16px -6px color-mix(in srgb, var(--accent) 55%, transparent);
+  }
+  .btn-primary:hover:not(:disabled) { transform: translateY(-1px); box-shadow: 0 2px 4px rgba(0,0,0,0.08), 0 10px 22px -6px color-mix(in srgb, var(--accent) 60%, transparent); }
+  .btn-primary:active:not(:disabled) { transform: translateY(0); }
+  .btn-primary:disabled { opacity: 0.4; cursor: not-allowed; box-shadow: none; }
+  .btn-ghost { background: transparent; color: var(--ink-soft); border-color: var(--line); }
+  .btn-ghost:hover { color: var(--ink); border-color: var(--ink-soft); background: color-mix(in srgb, var(--ink) 4%, transparent); }
+  .toast {
+    position: fixed; bottom: 20px; left: 50%; transform: translateX(-50%) translateY(20px);
+    background: var(--ink); color: var(--paper); padding: 10px 16px; border-radius: 10px;
+    font-size: 13px; font-weight: 600; opacity: 0; pointer-events: none; transition: all 0.2s;
+  }
+  .toast.show { opacity: 1; transform: translateX(-50%) translateY(0); }
+
+  /* Stage / apresentar */
+  .stage {
+    position: fixed; inset: 0; background: var(--paper); z-index: 50;
+    padding: env(safe-area-inset-top, 0px) 20px env(safe-area-inset-bottom, 0px);
+    overflow-y: auto;
+  }
+  .stage:not([hidden]) { display: flex; flex-direction: column; }
+  .stage-top { display: flex; justify-content: space-between; align-items: center; padding-block: 16px; }
+  .timer { font-family: "Sora", sans-serif; font-size: 34px; font-weight: 700; font-variant-numeric: tabular-nums; }
+  .timer.low { color: var(--danger); }
+  .stage-body { flex: 1; max-width: 640px; margin-inline: auto; width: 100%; padding-bottom: 40px; }
+  .stage-body .kicker { font-size: 14px; font-weight: 700; color: var(--accent); text-transform: uppercase; letter-spacing: 0.06em; }
+  .stage-body h2 { font-size: 30px; margin: 6px 0 20px; text-wrap: balance; }
+  .stage-row { margin-bottom: 18px; }
+  .stage-row .k { font-size: 12px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.05em; color: var(--ink-soft); margin-bottom: 4px; }
+  .stage-row .v { font-size: 17px; line-height: 1.55; }
+  .timer-controls { display: flex; gap: 8px; }
+  .timer-controls button {
+    border: 1px solid var(--line); background: var(--surface); color: var(--ink);
+    border-radius: 8px; padding: 8px 12px; font-size: 13px; font-weight: 600; cursor: pointer;
+  }
+</style>
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Sora:wght@600;700&family=DM+Sans:wght@400;500;700&display=swap" rel="stylesheet">
+</head>
+<body>
+
+<header>
+  <p class="eyebrow">📓 Comercial Bequest</p>
+  <h1>Livro de Cases Bequest</h1>
+  <p class="sub">Preenche o case, gera o texto formatado e cola numa task nova na lista do ClickUp — é lá que fica o registro oficial.</p>
+  <a class="clickup-link" href="https://app.clickup.com/3060283/v/li/901329090009" target="_blank" rel="noopener">Abrir a lista "Livro de Cases" no ClickUp ↗</a>
+</header>
+
+<div class="tip">
+  <h3>Como é um case bem escrito</h3>
+  <p>Case fraco conta uma história. Case forte tem três coisas: <strong>o número</strong> (valor, ciclo, follow-ups), <strong>a frase que foi dita</strong> (o que exatamente quebrou a objeção ou fez a negociação morrer) e <strong>o mecanismo</strong> (por que aquilo funcionou ou não funcionou). Sem isso ninguém consegue copiar o que você fez.</p>
+</div>
+
+<div class="topbar">
+  <div class="field">
+    <label>Vendedor <span class="req">*</span></label>
+    <select id="f_vendedor"></select>
+  </div>
+  <div class="field">
+    <label>Mês</label>
+    <select id="f_mes"></select>
+  </div>
+</div>
+
+<div class="toggle">
+  <button type="button" data-kind="sucesso" class="active">✅ Sucesso</button>
+  <button type="button" data-kind="fracasso">❌ Fracasso</button>
+</div>
+
+<section class="card">
+  <h2>Negócio</h2>
+  <div class="grid">
+    <div class="field">
+      <label>Produto <span class="req">*</span></label>
+      <select id="f_produto">
+        <option value="FMG">FMG</option>
+        <option value="Bequest PRO">Bequest PRO</option>
+        <option value="Wix">Wix</option>
+      </select>
+    </div>
+    <div class="field">
+      <label>Valor (R$)</label>
+      <input id="f_valor" type="number" min="0" step="1" placeholder="997">
+    </div>
+    <div class="field">
+      <label>Ciclo (dias até fechar)</label>
+      <input id="f_ciclo" type="number" min="0" step="1" placeholder="7">
+    </div>
+    <div class="field">
+      <label>Follow-ups (nº)</label>
+      <input id="f_followups" type="number" min="0" step="1" placeholder="3">
+    </div>
+  </div>
+  <div class="field">
+    <label>Passou por Análise de Loja?</label>
+    <div class="segrow" id="f_adl">
+      <button type="button" data-val="Sim">Sim</button>
+      <button type="button" data-val="Não">Não</button>
+    </div>
+  </div>
+</section>
+
+<section class="card">
+  <h2>Contexto do lead</h2>
+  <div class="field">
+    <label>Perfil do cliente</label>
+    <input id="f_perfil" type="text" placeholder="Ex: 34 anos, já vendia em marketplace, queria escalar">
+  </div>
+  <div class="field">
+    <label>Canal de origem</label>
+    <input id="f_canal" type="text" placeholder="Ex: Instagram Ads, indicação, orgânico...">
+  </div>
+  <div class="field">
+    <label>Objeção principal</label>
+    <input id="f_objecao" type="text" placeholder="Ex: achou caro, não confiava, sem tempo...">
+  </div>
+</section>
+
+<section class="card">
+  <h2>Negociação</h2>
+  <div class="field">
+    <label>Proposta</label>
+    <textarea id="f_proposta" placeholder="O que foi oferecido, condição, prazo..."></textarea>
+  </div>
+  <div class="field">
+    <label>Negociação</label>
+    <textarea id="f_negociacao" placeholder="Como a conversa evoluiu, o que foi dito..."></textarea>
+  </div>
+  <div class="field">
+    <label>Técnica de abordagem</label>
+    <input id="f_tecnica" type="text" placeholder="Ex: SPIN, ancoragem de preço, urgência de turma...">
+  </div>
+</section>
+
+<section class="card" id="card_sucesso">
+  <h2>Fechamento</h2>
+  <div class="field">
+    <label>Gatilho usado <span class="req">*</span></label>
+    <select id="f_gatilho">
+      <option value="">Selecione...</option>
+      <option>Reciprocidade</option>
+      <option>Coerência e compromisso</option>
+      <option>Prova social</option>
+      <option>Autoridade</option>
+      <option>Afinidade</option>
+      <option>Escassez</option>
+      <option>Unidade</option>
+      <option value="__outro">Outro (especificar)</option>
+    </select>
+    <input id="f_gatilho_outro" type="text" placeholder="Qual gatilho?" style="margin-top:6px; display:none;">
+  </div>
+  <div class="field">
+    <label>Fechamento</label>
+    <textarea id="f_fechamento" placeholder="Como fechou — a frase, o argumento decisivo..."></textarea>
+  </div>
+</section>
+
+<section class="card" id="card_fracasso" style="display:none;">
+  <h2>Onde a negociação morreu</h2>
+  <div class="field">
+    <label>Motivo de perda <span class="req">*</span></label>
+    <select id="f_motivo">
+      <option value="">Selecione...</option>
+      <option>Não respondeu primeiro contato</option>
+      <option>Telefone inválido</option>
+      <option>Já comprou</option>
+      <option>Sem interesse</option>
+      <option>Sem dinheiro</option>
+      <option>Parou de responder</option>
+      <option>Achou caro</option>
+      <option>Ainda não teve resultado com PVG</option>
+      <option>Interesse em trilha específica</option>
+      <option>Pediu Reembolso</option>
+      <option>Insatisfeito com o Suporte PVG</option>
+      <option>Insatisfeito com Aulas / Produto desatualizado</option>
+      <option>Shopify 3 meses por 1 dolar WIX</option>
+      <option>Sem Dinheiro Plano WIX</option>
+      <option>Já Montou loja WIX</option>
+    </select>
+  </div>
+  <div class="field">
+    <label>Detalhe</label>
+    <textarea id="f_detalhe" placeholder="Onde exatamente deu mole — o que faria diferente da próxima vez"></textarea>
+  </div>
+</section>
+
+<section class="card">
+  <h2>Prévia do case</h2>
+  <div class="field">
+    <label>Título sugerido da task</label>
+    <div class="preview" id="preview_title" style="max-height:none;"></div>
+  </div>
+  <div class="field">
+    <label>Descrição (cola no corpo da task)</label>
+    <div class="preview" id="preview_body"></div>
+  </div>
+  <div class="missing" id="missing_hint"></div>
+</section>
+
+<div class="actions">
+  <button class="btn btn-primary" id="btn_copy">Copiar pro ClickUp</button>
+  <button class="btn btn-ghost" id="btn_stage">Apresentar (5 min)</button>
+  <button class="btn btn-ghost" id="btn_clear">Limpar rascunho</button>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<div class="stage" id="stage" hidden>
+  <div class="stage-top">
+    <button class="btn btn-ghost" id="stage_close">← Fechar</button>
+    <div style="display:flex; align-items:center; gap:12px;">
+      <div class="timer" id="stage_timer">5:00</div>
+      <div class="timer-controls">
+        <button id="stage_start">Iniciar</button>
+        <button id="stage_reset">Reiniciar</button>
+      </div>
+    </div>
+  </div>
+  <div class="stage-body" id="stage_content"></div>
+</div>
+
+<script>
+(function () {
+  var VENDEDORES = ["Albano Augusto","Clarice Rodrigues Vieira","Diovanne Silva","Douglas Oliveira",
+    "Gabriel Fraga","Heitor Souza","Lucas Chagas","Ludmila Ferrão","Luiza Pereira","Marcos Medeiros",
+    "Pedro Henrique","Pedro Nogueira","Raphael Ribeiro","Samuel Tavares"];
+  var MESES = [
+    {label:"Setembro/2026", val:"2026-09"}, {label:"Outubro/2026", val:"2026-10"},
+    {label:"Novembro/2026", val:"2026-11"}, {label:"Dezembro/2026", val:"2026-12"}
+  ];
+  var PRODUTO_ABREV = {"FMG":"FMG", "Bequest PRO":"PRO", "Wix":"WIX"};
+  var DRAFT_KEY = "livro-cases-draft-v1";
+
+  var vendedorSel = document.getElementById("f_vendedor");
+  VENDEDORES.forEach(function (v) {
+    var o = document.createElement("option"); o.value = v; o.textContent = v;
+    vendedorSel.appendChild(o);
+  });
+
+  var mesSel = document.getElementById("f_mes");
+  var nowYm = new Date().toISOString().slice(0, 7);
+  var defaultMonth = MESES.some(function (m) { return m.val === nowYm; }) ? nowYm : "2026-09";
+  MESES.forEach(function (m) {
+    var o = document.createElement("option"); o.value = m.val; o.textContent = m.label;
+    if (m.val === defaultMonth) o.selected = true;
+    mesSel.appendChild(o);
+  });
+
+  var kind = "sucesso";
+  var adl = null;
+
+  var toggleBtns = document.querySelectorAll(".toggle button");
+  toggleBtns.forEach(function (b) {
+    b.addEventListener("click", function () {
+      kind = b.getAttribute("data-kind");
+      toggleBtns.forEach(function (x) { x.classList.toggle("active", x === b); });
+      document.getElementById("card_sucesso").style.display = kind === "sucesso" ? "" : "none";
+      document.getElementById("card_fracasso").style.display = kind === "fracasso" ? "" : "none";
+      renderPreview(); saveDraft();
+    });
+  });
+
+  var adlBtns = document.querySelectorAll("#f_adl button");
+  adlBtns.forEach(function (b) {
+    b.addEventListener("click", function () {
+      adl = b.getAttribute("data-val");
+      adlBtns.forEach(function (x) { x.classList.toggle("active", x === b); });
+      renderPreview(); saveDraft();
+    });
+  });
+
+  var gatilhoSel = document.getElementById("f_gatilho");
+  var gatilhoOutro = document.getElementById("f_gatilho_outro");
+  gatilhoSel.addEventListener("change", function () {
+    gatilhoOutro.style.display = gatilhoSel.value === "__outro" ? "" : "none";
+    renderPreview(); saveDraft();
+  });
+
+  var FIELD_IDS = ["f_vendedor","f_mes","f_produto","f_valor","f_ciclo","f_followups",
+    "f_perfil","f_canal","f_objecao","f_proposta","f_negociacao","f_tecnica",
+    "f_gatilho","f_gatilho_outro","f_fechamento","f_motivo","f_detalhe"];
+
+  function val(id) { var el = document.getElementById(id); return el ? el.value.trim() : ""; }
+
+  function gatilhoFinal() {
+    return gatilhoSel.value === "__outro" ? val("f_gatilho_outro") : gatilhoSel.value;
+  }
+
+  function buildTitle() {
+    var ym = val("f_mes") || defaultMonth;
+    var vend = val("f_vendedor") || "?";
+    var prod = PRODUTO_ABREV[val("f_produto")] || "?";
+    var tipo = kind === "sucesso" ? "Sucesso" : "Fracasso";
+    return ym + " · " + vend + " · " + prod + " · " + tipo;
+  }
+
+  function buildBody() {
+    var lines = [];
+    lines.push("📓 CASE — " + (kind === "sucesso" ? "SUCESSO" : "FRACASSO"));
+    lines.push("Vendedor: " + (val("f_vendedor") || "—"));
+    lines.push("Produto: " + (val("f_produto") || "—") +
+      "  ·  Valor: R$ " + (val("f_valor") || "—") +
+      "  ·  Ciclo: " + (val("f_ciclo") || "—") + " dias" +
+      "  ·  Follow-ups: " + (val("f_followups") || "—") +
+      "  ·  ADL: " + (adl || "—"));
+    lines.push("");
+    lines.push("Perfil do cliente: " + (val("f_perfil") || "—"));
+    lines.push("Canal de origem: " + (val("f_canal") || "—"));
+    lines.push("Objeção principal: " + (val("f_objecao") || "—"));
+    lines.push("Proposta: " + (val("f_proposta") || "—"));
+    lines.push("Negociação: " + (val("f_negociacao") || "—"));
+    lines.push("Técnica de abordagem: " + (val("f_tecnica") || "—"));
+    lines.push("");
+    if (kind === "sucesso") {
+      lines.push("Gatilho usado: " + (gatilhoFinal() || "—"));
+      lines.push("Fechamento: " + (val("f_fechamento") || "—"));
+    } else {
+      lines.push("Motivo de perda: " + (val("f_motivo") || "—"));
+      lines.push("Detalhe: " + (val("f_detalhe") || "—"));
+    }
+    return lines.join("\n");
+  }
+
+  function missingFields() {
+    var missing = [];
+    if (!val("f_vendedor")) missing.push("Vendedor");
+    if (!val("f_produto")) missing.push("Produto");
+    if (kind === "sucesso" && !gatilhoFinal()) missing.push("Gatilho usado");
+    if (kind === "fracasso" && !val("f_motivo")) missing.push("Motivo de perda");
+    return missing;
+  }
+
+  var copyBtn = document.getElementById("btn_copy");
+
+  function renderPreview() {
+    document.getElementById("preview_title").textContent = buildTitle();
+    document.getElementById("preview_body").textContent = buildBody();
+    var missing = missingFields();
+    document.getElementById("missing_hint").textContent = missing.length
+      ? "Falta preencher: " + missing.join(", ") : "";
+    copyBtn.disabled = missing.length > 0;
+  }
+
+  function saveDraft() {
+    try {
+      var data = {kind: kind, adl: adl};
+      FIELD_IDS.forEach(function (id) { data[id] = val(id); });
+      localStorage.setItem(DRAFT_KEY, JSON.stringify(data));
+    } catch (e) {}
+  }
+
+  function loadDraft() {
+    try {
+      var raw = localStorage.getItem(DRAFT_KEY);
+      if (!raw) return;
+      var data = JSON.parse(raw);
+      FIELD_IDS.forEach(function (id) {
+        if (data[id] !== undefined) { var el = document.getElementById(id); if (el) el.value = data[id]; }
+      });
+      if (data.kind) {
+        kind = data.kind;
+        toggleBtns.forEach(function (b) { b.classList.toggle("active", b.getAttribute("data-kind") === kind); });
+        document.getElementById("card_sucesso").style.display = kind === "sucesso" ? "" : "none";
+        document.getElementById("card_fracasso").style.display = kind === "fracasso" ? "" : "none";
+      }
+      if (data.adl) {
+        adl = data.adl;
+        adlBtns.forEach(function (b) { b.classList.toggle("active", b.getAttribute("data-val") === adl); });
+      }
+      gatilhoOutro.style.display = gatilhoSel.value === "__outro" ? "" : "none";
+    } catch (e) {}
+  }
+
+  document.querySelectorAll("input, select, textarea").forEach(function (el) {
+    el.addEventListener("input", function () { renderPreview(); saveDraft(); });
+    el.addEventListener("change", function () { renderPreview(); saveDraft(); });
+  });
+
+  var toast = document.getElementById("toast");
+  function showToast(msg) {
+    toast.textContent = msg;
+    toast.classList.add("show");
+    setTimeout(function () { toast.classList.remove("show"); }, 2200);
+  }
+
+  copyBtn.addEventListener("click", function () {
+    var text = buildTitle() + "\n\n" + buildBody();
+    navigator.clipboard.writeText(text).then(function () {
+      showToast("Copiado! Cola numa task nova na lista do ClickUp.");
+    }).catch(function () {
+      var ta = document.createElement("textarea");
+      ta.value = text; ta.style.position = "fixed"; ta.style.opacity = "0";
+      document.body.appendChild(ta); ta.focus(); ta.select();
+      try { document.execCommand("copy"); showToast("Copiado! Cola numa task nova na lista do ClickUp."); }
+      catch (e) { showToast("Não deu pra copiar sozinho — seleciona o texto da prévia e usa Cmd/Ctrl+C."); }
+      document.body.removeChild(ta);
+    });
+  });
+
+  var clearBtn = document.getElementById("btn_clear");
+  var clearArmed = false;
+  clearBtn.addEventListener("click", function () {
+    if (!clearArmed) {
+      clearArmed = true;
+      clearBtn.textContent = "Confirmar limpeza?";
+      setTimeout(function () { clearArmed = false; clearBtn.textContent = "Limpar rascunho"; }, 3000);
+      return;
+    }
+    try { localStorage.removeItem(DRAFT_KEY); } catch (e) {}
+    document.querySelectorAll("input, textarea").forEach(function (el) { el.value = ""; });
+    document.querySelectorAll("select").forEach(function (el) { el.selectedIndex = 0; });
+    mesSel.value = defaultMonth;
+    kind = "sucesso";
+    toggleBtns.forEach(function (b) { b.classList.toggle("active", b.getAttribute("data-kind") === "sucesso"); });
+    document.getElementById("card_sucesso").style.display = "";
+    document.getElementById("card_fracasso").style.display = "none";
+    adl = null;
+    adlBtns.forEach(function (b) { b.classList.remove("active"); });
+    gatilhoOutro.style.display = "none";
+    clearArmed = false; clearBtn.textContent = "Limpar rascunho";
+    renderPreview();
+    showToast("Rascunho limpo.");
+  });
+
+  // Stage / apresentar
+  var stage = document.getElementById("stage");
+  var stageContent = document.getElementById("stage_content");
+  var stageTimerEl = document.getElementById("stage_timer");
+  var timerSecs = 300, timerHandle = null, timerRunning = false;
+
+  function renderStageContent() {
+    var tipo = kind === "sucesso" ? "SUCESSO" : "FRACASSO";
+    var rows = [
+      ["Perfil do cliente", val("f_perfil")],
+      ["Canal de origem", val("f_canal")],
+      ["Objeção principal", val("f_objecao")],
+      ["Proposta", val("f_proposta")],
+      ["Negociação", val("f_negociacao")],
+      ["Técnica de abordagem", val("f_tecnica")]
+    ];
+    if (kind === "sucesso") {
+      rows.push(["Gatilho usado", gatilhoFinal()]);
+      rows.push(["Fechamento", val("f_fechamento")]);
+    } else {
+      rows.push(["Motivo de perda", val("f_motivo")]);
+      rows.push(["Detalhe", val("f_detalhe")]);
+    }
+    var html = '<p class="kicker">' + tipo + ' · ' + (val("f_produto") || "—") + '</p>';
+    html += '<h2>' + (val("f_vendedor") || "Vendedor") + '</h2>';
+    rows.forEach(function (r) {
+      if (!r[1]) return;
+      html += '<div class="stage-row"><div class="k">' + r[0] + '</div><div class="v">' + r[1].replace(/</g, "&lt;") + '</div></div>';
+    });
+    stageContent.innerHTML = html;
+  }
+
+  function updateTimerDisplay() {
+    var m = Math.floor(timerSecs / 60), s = timerSecs % 60;
+    stageTimerEl.textContent = m + ":" + (s < 10 ? "0" : "") + s;
+    stageTimerEl.classList.toggle("low", timerSecs <= 30);
+  }
+
+  document.getElementById("btn_stage").addEventListener("click", function () {
+    renderStageContent();
+    stage.hidden = false;
+  });
+  document.getElementById("stage_close").addEventListener("click", function () {
+    stage.hidden = true;
+    clearInterval(timerHandle); timerRunning = false;
+    document.getElementById("stage_start").textContent = "Iniciar";
+  });
+  document.getElementById("stage_start").addEventListener("click", function (e) {
+    if (timerRunning) {
+      clearInterval(timerHandle); timerRunning = false; e.target.textContent = "Continuar";
+    } else {
+      timerRunning = true; e.target.textContent = "Pausar";
+      timerHandle = setInterval(function () {
+        if (timerSecs > 0) { timerSecs--; updateTimerDisplay(); }
+        else { clearInterval(timerHandle); timerRunning = false; document.getElementById("stage_start").textContent = "Iniciar"; }
+      }, 1000);
+    }
+  });
+  document.getElementById("stage_reset").addEventListener("click", function () {
+    clearInterval(timerHandle); timerRunning = false; timerSecs = 300;
+    updateTimerDisplay();
+    document.getElementById("stage_start").textContent = "Iniciar";
+  });
+  document.addEventListener("keydown", function (e) {
+    if (e.key === "Escape" && !stage.hidden) document.getElementById("stage_close").click();
+  });
+
+  loadDraft();
+  renderPreview();
+  updateTimerDisplay();
+})();
+</script>
+</body>
+</html>
